@@ -53,6 +53,10 @@ boolLit = "true" / "false"
 
 strLit = obj:( "'" charValue* "'" ) / obj:( '"' charValue* '"' )
 { return obj[1].join('') }
+objLit = "{" values:(ws? ident ws? ":" ws? constant)* ws? "}"
+{ return values.reduce((o, v) => { o[v[1]] = v[5]; return o; }, {}); }
+arrLit = "[" values:(ws? constant (ws? "," ws? constant)*) ws? "]"
+{ return values[2].map(v => v[3]); }
 charValue = hexEscape / octEscape / charEscape / [^\0\n\\\"\']
 hexEscape = '\\' [xX] hexDigit hexDigit
 octEscape = '\\' octDigit octDigit octDigit
@@ -63,7 +67,7 @@ charEscape = '\\' [abfnrtv\"\'\\]
 emptyStatement = ";"
 {}
 
-constant = strLit / fullIdent / ( [-+]? intLit ) / ( [-+]? floatLit ) / boolLit
+constant = strLit / objLit / arrLit / fullIdent / ( [-+]? intLit ) / ( [-+]? floatLit ) / boolLit
 
 syntax = "syntax" ws? "=" ws? quote val:("proto2" / "proto3") quote ws? ";"
 { return { type: "syntax", syntax: val } }
