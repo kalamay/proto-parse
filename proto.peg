@@ -212,12 +212,24 @@ service = "service" ws a:serviceName ws? "{" b:( ws / option / rpc / emptyStatem
 }
 rpc = "rpc" ws a:rpcName ws? "(" ws? b:("stream" ws)? c:messageType ws? ")" ws? "returns" ws? "(" ws? d:("stream" ws)? e:messageType ws? ")" ws? f:(rpcBody / ";")
 { 
-	if(b && b[0] == "stream")
-    	c.stream = true;
-    if(d && d[0] == "stream")
-    	e.stream = true;
-    if( f == ";" )
-    	f = {};
+  if(b && b[0] == "stream") {
+      c.stream = true;
+  }
+  if (d && d[0] == "stream") {
+      e.stream = true;
+  }
+  if (f == ";" ) {
+      f = {};
+  }
 	return { type: "rpc", name: a, param: c, returns: e, opts: f } 
 }
-rpcBody = ( "{" (option / emptyStatement / ws )* "}" )
+rpcBody = data:( "{" (option / emptyStatement / ws )* "}" )
+{
+  const obj = {};
+  for (let val of data[1]) {
+      if (val && typeof val === 'object') {
+          obj[val.name] = val.val;
+      }
+  }
+  return obj;
+}
