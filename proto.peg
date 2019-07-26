@@ -1,4 +1,4 @@
-proto = z:ws? a:syntax b:(import / package / option / emptyStatement / message / enum / service / ws)*
+proto = z:ws? a:syntax b:(import / package / option / emptyStatement / message / extend / enum / service / ws)*
 {
 	var arr = {syntax: a.syntax};
     arr.content = b.filter(function(a){return a !== undefined});
@@ -25,6 +25,7 @@ ident = a:letter b:(letter / decDigit / "_")*
 fullIdent = a:ident b:("." ident)*
 { b.unshift([a]); return b.map(function(c){return c.join('')}).join('') }
 messageName = ident
+extendName = ident ("." ident)*
 enumName = ident
 fieldName = ident
 oneofName = ident
@@ -181,7 +182,9 @@ enumField = a:ident ws? "=" ws? b:intLit ws? c:(fieldOptionsParam)? ws? ";"
 }
 message = "message" ws a:messageName ws? b:messageBody
 { return {type: 'message', name: a, content: b.content, opts: b.opts } }
-messageBody = "{" a:( field / enum / message / option / oneof / mapField /reserved / emptyStatement / ws )* "}"
+extend = "extend" ws a:extendName ws? b:messageBody
+{ return {type: 'extend', name: a, content: b.content, opts: b.opts } }
+messageBody = "{" a:( field / enum / message / extend / option / oneof / mapField /reserved / emptyStatement / ws )* "}"
 { 
 	var opts = {};
     var content = [];
