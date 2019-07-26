@@ -101,11 +101,12 @@ fieldOptionsParam = "[" ws? a:fieldOptions ws? "]"
 	return opts;    
 }
 
-field = a:"repeated"? ws? b:type ws? c:fieldName ws? "=" ws? d:fieldNumber ws? e:(fieldOptionsParam)? ws? ";"
+field = a:("repeated" / "optional")? ws? b:type ws? c:fieldName ws? "=" ws? d:fieldNumber ws? e:(fieldOptionsParam)? ws? ";"
 { 
 	return {
       type: "field",
-      repeated: a != null,
+      repeated: a === "repeated",
+      optional: a === "optional",
       typename: b,
       name: c,
       fieldNo: d,

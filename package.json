@@ -1,6 +1,6 @@
 {
   "name": "proto-parse",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Utility to parse a proto3 file, which describes a Google protocol buffer.",
   "main": "proto-parse.js",
   "scripts": {
